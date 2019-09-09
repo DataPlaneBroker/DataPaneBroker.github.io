@@ -3,31 +3,26 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://DataPlaneBroker.github.io/posts/overview/</loc>
-    <lastmod>2019-09-07T15:50:56+01:00</lastmod>
+    <loc>/about/</loc>
+    <lastmod>2018-05-31T16:55:04+04:30</lastmod>
   </url>
   
   <url>
-    <loc>http://DataPlaneBroker.github.io/posts/</loc>
-    <lastmod>2019-09-07T15:50:56+01:00</lastmod>
+    <loc>/</loc>
+    <lastmod>2018-06-27T14:06:09+04:30</lastmod>
   </url>
   
   <url>
-    <loc>http://DataPlaneBroker.github.io/</loc>
-    <lastmod>2019-09-07T15:10:38+01:00</lastmod>
+    <loc>/</loc>
+    <lastmod>2018-06-27T14:06:09+04:30</lastmod>
   </url>
   
   <url>
-    <loc>http://DataPlaneBroker.github.io/posts/installation/</loc>
-    <lastmod>2019-09-07T14:52:47+01:00</lastmod>
+    <loc>/categories/</loc>
   </url>
   
   <url>
-    <loc>http://DataPlaneBroker.github.io/categories/</loc>
-  </url>
-  
-  <url>
-    <loc>http://DataPlaneBroker.github.io/tags/</loc>
+    <loc>/tags/</loc>
   </url>
   
 </urlset>
