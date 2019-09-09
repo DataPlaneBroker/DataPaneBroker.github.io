@@ -3,43 +3,43 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>www.example.com/docs/intro/</loc>
+    <loc>dataplanebroker.github.io/docs/intro/</loc>
     <lastmod>2019-09-01T19:27:37+10:00</lastmod>
   </url>
   
   <url>
-    <loc>www.example.com/docs/install/</loc>
+    <loc>dataplanebroker.github.io/docs/install/</loc>
     <lastmod>2019-09-01T15:14:39+10:00</lastmod>
   </url>
   
   <url>
-    <loc>www.example.com/news/</loc>
+    <loc>dataplanebroker.github.io/news/</loc>
     <lastmod>2019-02-11T19:27:37+10:00</lastmod>
   </url>
   
   <url>
-    <loc>www.example.com/news/5th-osm-hackfest/</loc>
+    <loc>dataplanebroker.github.io/news/5th-osm-hackfest/</loc>
     <lastmod>2019-09-09T14:34:31+01:00</lastmod>
   </url>
   
   <url>
-    <loc>www.example.com/docs/</loc>
+    <loc>dataplanebroker.github.io/docs/</loc>
     <lastmod>2019-09-01T19:27:37+10:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>www.example.com/</loc>
+    <loc>dataplanebroker.github.io/</loc>
     <lastmod>2019-09-01T15:14:39+10:00</lastmod>
   </url>
   
   <url>
-    <loc>www.example.com/categories/</loc>
+    <loc>dataplanebroker.github.io/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>www.example.com/tags/</loc>
+    <loc>dataplanebroker.github.io/tags/</loc>
     <priority>0</priority>
   </url>
   

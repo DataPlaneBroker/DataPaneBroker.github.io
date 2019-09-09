@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Docs on Hugo Whisper Theme</title>
-    <link>www.example.com/docs/</link>
-    <description>Recent content in Docs on Hugo Whisper Theme</description>
+    <title>Docs on DataPlane Broker</title>
+    <link>dataplanebroker.github.io/docs/</link>
+    <description>Recent content in Docs on DataPlane Broker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 01 Sep 2019 19:27:37 +1000</lastBuildDate>
     
-	<atom:link href="www.example.com/docs/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="dataplanebroker.github.io/docs/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>DataPlane Broker Introduction</title>
-      <link>www.example.com/docs/intro/</link>
+      <link>dataplanebroker.github.io/docs/intro/</link>
       <pubDate>Sun, 01 Sep 2019 19:27:37 +1000</pubDate>
       
-      <guid>www.example.com/docs/intro/</guid>
+      <guid>dataplanebroker.github.io/docs/intro/</guid>
       <description>NFV-MANO data model and the WIM NFV management standardization is predominantly driven by the ETSI NFV SIG. The group develops a wide portfolio of standards and reference implementations, including the NFV-MANO architecture and data models.</description>
     </item>
     
     <item>
       <title>Installation</title>
-      <link>www.example.com/docs/install/</link>
+      <link>dataplanebroker.github.io/docs/install/</link>
       <pubDate>Sun, 01 Sep 2019 15:14:39 +1000</pubDate>
       
-      <guid>www.example.com/docs/install/</guid>
+      <guid>dataplanebroker.github.io/docs/install/</guid>
       <description>Installing the DPB service Under development.
 Install NBI information Install WIM Driver in RO DPB RO repo git clone https://github.</description>
     </item>
