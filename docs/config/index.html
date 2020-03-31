@@ -41,6 +41,12 @@
       </a>
     </li>
     
+    <li class="menu-item-configuration">
+      <a href="/docs/config">
+        <span>Configuration</span>
+      </a>
+    </li>
+    
     <li class="menu-item-news">
       <a href="/news/">
         <span>News</span>
@@ -77,6 +83,12 @@
     <li class="menu-item-install">
       <a href="/docs/installation">
         <span>Install</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-configuration">
+      <a href="/docs/config">
+        <span>Configuration</span>
       </a>
     </li>
     
@@ -270,7 +282,9 @@ mycorsa.ctrl.rest.location=http:\//localhost:8081/slicer/
 <p>The <code>-d</code> runs in debug mode, i.e., the server process remains in the foreground, and remains connected to the terminal.  Without it, the command exits as soon as the server is established and has forked into the background.</p>
 <p>To run as a cronjob, remember to escape the <code>%</code> character in the command, as this is special in <code>crontab</code>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">*/10 * * * * usmux -B /tmp/dataplane-broker.sock -- dpb-server -s &#39;\%s&#39; -L/usr/share/java -L/usr/local/share/java -lsqlite-jdbc -lhttpcore -lhttpclient -lcommons-logging &gt; /dev/null 2&gt;&amp;amp;1
-</code></pre></div><p>If you&rsquo;re using the Docker image, run with:</p>
+</code></pre></div><p>If you&rsquo;re using the Docker image, make sure directories to be mounted already exist (or Docker will create them as <code>root</code>):</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">mkdir -p ~/.local/var/dataplane-broker ~/.config/dataplane-broker
+</code></pre></div><p>Then run with:</p>
 <div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -d --restart unless-stopped --name dpb-server \
   -p 4753:4753 \
   -v ~/.config/dataplane-broker:/root/.config/dataplane-broker:ro \
@@ -323,7 +337,10 @@ aggr.name=aggr
       -v ~/.config/dataplane-broker:/root/.config/dataplane-broker:ro \
       simpsonst/dpb-client &#34;$@&#34; 
 }
-</code></pre></div><p>You will likely need the <code>config-file</code> of the SSH options if running through Docker, as SSH will complain about ownership of the default configuration file.  (It&rsquo;s running as <code>root</code>, but the file is owned by <code>me</code>.)  Of course, this means you can&rsquo;t use any settings from that file.</p>
+</code></pre></div><p>Before you run it, make sure the directories it references already exist with the right permissions and ownership:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">mkdir -p -m 700 ~/.ssh
+mkdir -p ~/.config/dataplane-broker
+</code></pre></div><p>You will likely need the <code>config-file</code> of the SSH options if running through Docker and you have a <code>~/.ssh/config</code> file, as SSH will complain about ownership of the default configuration file.  (It&rsquo;s running as <code>root</code>, but the file is owned by <code>me</code>.)  Of course, this means you can&rsquo;t use any settings from that file.</p>
 
 </div>
 </div>
