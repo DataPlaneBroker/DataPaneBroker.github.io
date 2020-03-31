@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Control - DataPlane Broker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="icon" href="http://dataplanebroker.github.io/favicon.png">
+
+  
+  
+  <link rel="stylesheet" href="/css/style.min.aad43d4ecb69a264f2539b89d7f779d5f3cdff22e7585fe5fc3c77272f1c2696.css">
+  
+
+  
+
+</head>
+
+<body class='page page-default-single'>
+  <div id="main-menu-mobile" class="main-menu-mobile">
+  <ul>
+    
+    
+    <li class="menu-item-home">
+      <a href="/">
+        <span>Home</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-what is dpb">
+      <a href="/docs/intro/">
+        <span>What is DPB</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-install">
+      <a href="/docs/installation">
+        <span>Install</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-news">
+      <a href="/news/">
+        <span>News</span>
+      </a>
+    </li>
+    
+  </ul>
+</div>
+  <div class="wrapper">
+    <div class='header'>
+  <div class="container">
+    <div class="logo">
+      <a href="http://dataplanebroker.github.io"><img alt="Logo" src="/images/logo.svg" /></a>
+    </div>
+    <div class="logo-mobile">
+      <a href="http://dataplanebroker.github.io"><img alt="Logo" src="/images/logo.svg" /></a>
+    </div>
+    <div id="main-menu" class="main-menu">
+  <ul>
+    
+    
+    <li class="menu-item-home">
+      <a href="/">
+        <span>Home</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-what is dpb">
+      <a href="/docs/intro/">
+        <span>What is DPB</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-install">
+      <a href="/docs/installation">
+        <span>Install</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-news">
+      <a href="/news/">
+        <span>News</span>
+      </a>
+    </li>
+    
+  </ul>
+</div>
+    <button id="toggle-main-menu-mobile" class="hamburger hamburger--slider" type="button">
+  <span class="hamburger-box">
+    <span class="hamburger-inner"></span>
+  </span>
+</button>
+  </div>
+</div>
+
+
+    
+    
+    
+    
+
+    
+    
+<h1 class="title">Control</h1>
+<div class="content ">
+  <p>The broker can be operated by SSH or REST.</p>
+<h1 id="ssh-interface">SSH interface</h1>
+<p>The command <code>dpb-client</code> invokes the broker over SSH.  <code>-n nw</code> selects the network <code>nw</code> for subsequent arguments to apply to.  <code>-s 4</code> selects service 4 for subsequent arguments.  See the <a href="http://scc-forge.lancaster.ac.uk/javadoc/dataplanebroker-test/uk/ac/lancs/networks/apps/Commander-method-main/1java$lang$String">command-line documentation</a> for more details.</p>
+<h2 id="operations-on-the-network">Operations on the network</h2>
+<ul>
+<li>
+<p>Test connectivity:</p>
+<pre><code>  dpb-client -n aggr dump
+</code></pre>
+</li>
+<li>
+<p>Create a service:</p>
+<pre><code>  dpb-client -n aggr new
+</code></pre>
+</li>
+</ul>
+<h2 id="operations-on-existing-services">Operations on existing services</h2>
+<ul>
+<li>
+<p>Select the service, and define its end points (100Mbps ingress):</p>
+<pre><code>  dpb-client -n aggr -s 1 -b 100 \
+      -e athens-openstack:50 \
+      -e london-openstack:80 initiate
+</code></pre>
+<p>This will plot a spanning tree across the switches, and allocate bandwidth from the physical links.</p>
+</li>
+<li>
+<p>Activate the service, creating the forwarding rules in the switches:</p>
+<pre><code>  dpb-client -n aggr -s 1 activate
+</code></pre>
+<p>In the case of a Corsa fabric, this also results in the attachment of VLAN tunnels to the bridge.</p>
+</li>
+<li>
+<p>De-activate the service:</p>
+<pre><code>  dpb-client -n aggr -s 1 deactivate
+</code></pre>
+</li>
+<li>
+<p>Activate the service:</p>
+<pre><code>  dpb-client -n aggr -s 1 activate
+</code></pre>
+</li>
+<li>
+<p>De-activate the service:</p>
+<pre><code>  dpb-client -n aggr -s 1 deactivate
+</code></pre>
+</li>
+<li>
+<p>Activate the service:</p>
+<pre><code>  dpb-client -n aggr -s 1 activate
+</code></pre>
+</li>
+<li>
+<p>De-activate the service:</p>
+<pre><code>  dpb-client -n aggr -s 1 deactivate
+</code></pre>
+</li>
+<li>
+<p>Release the service (resulting in its destruction):</p>
+<pre><code>  dpb-client -n aggr -s 1 release
+</code></pre>
+</li>
+<li>
+<p>Watch the service for events:</p>
+<pre><code>  dpb-client -n aggr -s 1 watch
+</code></pre>
+</li>
+</ul>
+<p><a href="http://scc-forge.lancaster.ac.uk/javadoc/dataplanebroker-test/uk/ac/lancs/networks/apps/Commander-method-main/1java$lang$String">Full command-line details</a> are available.</p>
+<h2 id="rest-interface">REST interface</h2>
+<p><a href="http://scc-forge.lancaster.ac.uk/javadoc/dataplanebroker-test/uk/ac/lancs/networks/rest/RESTNetworkControlServer">The REST interface is described in the Javadoc.</a>  Each network <code>foo</code> is served under a prefix <code>http://0.0.0.0:4753/network/foo</code>.</p>
+
+</div>
+</div>
+
+    
+  </div>
+
+  <div class="sub-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="sub-footer-inner">
+          <ul>
+            <li class="zerostatic"><a href="https://www.zerostatic.io">www.zerostatic.io</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/scripts.min.1237ff71925bb8625c97a9af8db4c54525258bedfd7c47493daaff723bea755e.js"></script>
+  
+
+  
+  
+  
+    
+  
+
+
+</body>
+
+</html>

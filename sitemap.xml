@@ -8,8 +8,18 @@
   </url>
   
   <url>
-    <loc>http://dataplanebroker.github.io/docs/install/</loc>
+    <loc>http://dataplanebroker.github.io/docs/installation/</loc>
     <lastmod>2020-01-13T11:49:39+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://dataplanebroker.github.io/docs/config/</loc>
+    <lastmod>2020-01-15T14:38:33+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://dataplanebroker.github.io/docs/mgmt/</loc>
+    <lastmod>2020-01-15T14:49:22+00:00</lastmod>
   </url>
   
   <url>
@@ -18,8 +28,13 @@
   </url>
   
   <url>
+    <loc>http://dataplanebroker.github.io/docs/ctrl/</loc>
+    <lastmod>2020-01-15T14:50:43+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://dataplanebroker.github.io/docs/</loc>
-    <lastmod>2020-01-13T11:49:39+00:00</lastmod>
+    <lastmod>2020-01-16T10:02:09+00:00</lastmod>
   </url>
   
   <url>

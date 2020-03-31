@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Configuration &amp; invocation - DataPlane Broker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="icon" href="http://dataplanebroker.github.io/favicon.png">
+
+  
+  
+  <link rel="stylesheet" href="/css/style.min.aad43d4ecb69a264f2539b89d7f779d5f3cdff22e7585fe5fc3c77272f1c2696.css">
+  
+
+  
+
+</head>
+
+<body class='page page-default-single'>
+  <div id="main-menu-mobile" class="main-menu-mobile">
+  <ul>
+    
+    
+    <li class="menu-item-home">
+      <a href="/">
+        <span>Home</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-what is dpb">
+      <a href="/docs/intro/">
+        <span>What is DPB</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-install">
+      <a href="/docs/installation">
+        <span>Install</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-news">
+      <a href="/news/">
+        <span>News</span>
+      </a>
+    </li>
+    
+  </ul>
+</div>
+  <div class="wrapper">
+    <div class='header'>
+  <div class="container">
+    <div class="logo">
+      <a href="http://dataplanebroker.github.io"><img alt="Logo" src="/images/logo.svg" /></a>
+    </div>
+    <div class="logo-mobile">
+      <a href="http://dataplanebroker.github.io"><img alt="Logo" src="/images/logo.svg" /></a>
+    </div>
+    <div id="main-menu" class="main-menu">
+  <ul>
+    
+    
+    <li class="menu-item-home">
+      <a href="/">
+        <span>Home</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-what is dpb">
+      <a href="/docs/intro/">
+        <span>What is DPB</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-install">
+      <a href="/docs/installation">
+        <span>Install</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-news">
+      <a href="/news/">
+        <span>News</span>
+      </a>
+    </li>
+    
+  </ul>
+</div>
+    <button id="toggle-main-menu-mobile" class="hamburger hamburger--slider" type="button">
+  <span class="hamburger-box">
+    <span class="hamburger-inner"></span>
+  </span>
+</button>
+  </div>
+</div>
+
+
+    
+    
+    
+    
+
+    
+    
+<h1 class="title">Configuration &amp; invocation</h1>
+<div class="content ">
+  <p>Here are details of how to configure and invoke DPB components.</p>
+<h2 id="corsa-controller-configuration">Corsa controller configuration</h2>
+<p>The Ryu controller <code>portslicer.py</code> is intended for use with Corsa DP2000-series switches.  The advantages of the Corsa fabric include the following:</p>
+<ul>
+<li>
+<p>The OpenFlow rules are relatively simple, as Corsa&rsquo;s tunnel attachments handle VLAN tagging and detagging.  As far as the OF switch is concerned, every circuit comes in on its own ofport.</p>
+</li>
+<li>
+<p>The tunnel attachments also handle bandwidth shaping (on exit from the switch) and metering (on entry).  These are set up by the server through the Corsa&rsquo;s REST-based management interface, not by <code>portslicer.py</code>.</p>
+</li>
+</ul>
+<p>One instance of this controller can operate several Corsa VFCs independently, which is useful if you&rsquo;re emulating a wide-area network in a single physical switch.  If, however, you have several widely distribted switches, we recomment that you run a separate, co-located controller for each.</p>
+<p>The <code>portslicer.py</code> controller presents two interfaces:</p>
+<ul>
+<li>
+<p>An OpenFlow interface, which bridges within the Corsa will contact when set up</p>
+</li>
+<li>
+<p>A northbound interface (NBI), through which the broker expresses intents to the switch</p>
+</li>
+</ul>
+<p>Configuration amounts to the specification of the addresses of these interfaces, and are placed in the command line when invoking.  The examples here use the following addresses for the interfaces:</p>
+<ul>
+<li>
+<p><code>172.31.31.1:6556</code> for the OpenFlow interface — The netns that switches run in must be able to reach this address.  We&rsquo;ll use <code>dpb-netns</code> as an example.</p>
+</li>
+<li>
+<p><code>localhost:8081</code> for the NBI — The DPB server must be able to reach this, and <code>localhost</code> is good enough if the controller and the broker are running in the same machine.</p>
+</li>
+</ul>
+<p>These details also go in the <code>ctrl</code> section of a fabric agent within the server configuration.</p>
+<h3 id="invoking-the-corsa-controller-with-docker">Invoking the Corsa controller with <code>docker</code></h3>
+<p>If you&rsquo;re using a Docker image, you can run it as follows, adjusting the port exposure as required:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -d --restart unless-stopped --name dpb-ctrl-corsa \
+  -p 127.0.0.1:8081:8081 -p 172.31.31.1:6556:6556 \
+  simpsonst/dpb-ctrl-corsa
+</code></pre></div><p>If you want to use different ports, <strong>the second port in each pair must not change</strong> — that&rsquo;s the internal port that the container binds to.</p>
+<h3 id="invoking-the-corsa-controller-manually">Invoking the Corsa controller manually</h3>
+<p>To run the controller manually:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">/usr/bin/ryu-manager \
+	--ofp-listen-host 172.31.31.1 \
+	--ofp-tcp-listen-port 6556 \
+	--wsapi-host localhost \
+	--wsapi-port 8081 \
+	/usr/local/share/dataplane-broker/portslicer.py
+</code></pre></div><p>Some (older?) versions of <code>ryu-manager</code> will just quit if the ports are already in use, making the command safe to run as a cronjob; bizarrely, newer versions seem to just hang about for ever, making it useless for <code>cron</code>.  In the latter case, perhaps an <code>@reboot</code> cronjob is appropriate.</p>
+<h2 id="generic-openflow-controller-configuration">Generic OpenFlow controller configuration</h2>
+<p>The Ryu controller <code>tupleslicer.py</code> is intended for use with OpenFlow1.3 switches.</p>
+<p>One instance of this controller can operate several switches independently, which is useful if you&rsquo;re emulating a wide-area network over several physical switches in a laboratory.  If, however, you have several widely distribted switches, you should run a separate, co-located controller for each.</p>
+<p>The <code>tupleslicer.py</code> controller presents two interfaces:</p>
+<ul>
+<li>
+<p>An OpenFlow interface, which the switch must be configured to contact</p>
+</li>
+<li>
+<p>A northbound interface (NBI), through which the broker expresses intents to the switch</p>
+</li>
+</ul>
+<p>Configuration amounts to the specification of the addresses of these interfaces, and are placed in the command line when invoking.  The examples here use the following addresses for the interfaces:</p>
+<ul>
+<li>
+<p><code>172.31.31.1:6556</code> for the OpenFlow interface — The netns that switches run in must be able to reach this address.  We&rsquo;ll use <code>dpb-netns</code> as an example.</p>
+</li>
+<li>
+<p><code>localhost:8081</code> for the NBI — The DPB server must be able to reach this, and <code>localhost</code> is good enough if the controller and the broker are running in the same machine.</p>
+</li>
+</ul>
+<p>These details also go in the <code>ctrl</code> section of a fabric agent within the server configuration.</p>
+<h3 id="invoking-the-generic-openflow-controller-manually">Invoking the Generic OpenFlow controller manually</h3>
+<p>To run the controller manually:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">/usr/bin/ryu-manager --ofp-listen-host 172.31.31.1 \
+	--ofp-tcp-listen-port 6556 \
+	--wsapi-host localhost --wsapi-port 8081 \
+	/usr/local/share/dataplane-broker/tupleslicer.py
+</code></pre></div><p>Some (older?) versions of <code>ryu-manager</code> will just quit if the ports are already in use, making the command safe to run as a cronjob; bizarrely, newer versions seem to just hang about for ever, making it useless for <code>cron</code>.  In the latter case, perhaps an <code>@reboot</code> cronjob is appropriate.</p>
+<h2 id="dpb-server-configuration">DPB server configuration</h2>
+<p>Create server-side configuration as required in <code>~/.config/dataplanebroker/server.properties</code> (a Java &lsquo;properties&rsquo; file, consisting of <code>dotted.name=value pairs</code>).  This file must contain a property called <code>agents</code> whose value is a comma-separated list of prefixes of other properties.  For example, if it contains <code>…, foo, …</code>, then there should also be a set of properties beginning <code>foo.</code>.</p>
+<p>Here&rsquo;s an example server-side configuration, establishing three persistent switches (referred to as <code>london</code>, <code>athens</code> and <code>paris</code>, all realised on a single Corsa) and one persistent aggregator <code>aggr</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">## Two agents are required for each switch, one to implement
+## a generic switch abstraction, and one to adapt it to the
+## physical fabric.
+agents=london-switch, london-fabric, \
+paris-switch, paris-fabric, \
+athens-switch, athens-fabric, \
+aggr
+
+aggr.name=aggr
+aggr.type=persistent-aggregator
+aggr.db.service=jdbc:sqlite:/home/me/.local/var/dataplane-broker/aggr.sqlite3
+
+## The london switch stores its service status in an Sqlite3 database,
+## and operates the fabric provided by the london-fabric agent.
+london-switch.name=london
+london-switch.type=persistent-switch
+london-switch.db.service=jdbc:sqlite:/home/me/.local/var/dataplane-broker/london-switch.sqlite3
+london-switch.fabric.agent=london-fabric
+
+## The london fabric operates a single VFC in a Corsa,
+## multiplexing services across it.  It is told how to
+## operate the Corsa&#39;s REST management interface, what
+## OpenFlow configuration to apply to the VFC (the
+## controller address, and netns, if it needs to create
+## it), and how to configure the VFC&#39;s controller (through
+## a custom REST API).
+
+london-fabric.name=london-fabric
+london-fabric.type=corsa-dp2x00-sharedbr
+london-fabric.description.prefix=dpb:vc:london:
+london-fabric.subtype=openflow
+london-fabric.rest.inherit=\#mycorsa.rest
+london-fabric.ctrl.inherit=\#mycorsa.ctrl
+
+## Other switches and fabrics follow a similar pattern.
+athens-switch.name=athens
+athens-switch.type=persistent-switch
+athens-switch.db.service=jdbc:sqlite:/home/me/.local/var/dataplane-broker/athens-switch.sqlite3
+athens-switch.fabric.agent=athens-fabric
+
+athens-fabric.name=athens-fabric
+athens-fabric.type=corsa-dp2x00-sharedbr
+athens-fabric.description.prefix=dpb:vc:athens:
+athens-fabric.subtype=openflow
+athens-fabric.rest.inherit=\#mycorsa.rest
+athens-fabric.ctrl.inherit=\#mycorsa.ctrl
+
+paris-switch.name=paris
+paris-switch.type=persistent-switch
+paris-switch.db.service=jdbc:sqlite:/home/me/.local/var/dataplane-broker/paris-switch.sqlite3
+paris-switch.fabric.agent=paris-fabric
+
+paris-fabric.name=paris-fabric
+paris-fabric.type=corsa-dp2x00-sharedbr
+paris-fabric.description.prefix=dpb:vc:paris:
+paris-fabric.subtype=openflow
+paris-fabric.rest.inherit=\#mycorsa.rest
+paris-fabric.ctrl.inherit=\#mycorsa.ctrl
+
+## These credentials are used to operate a Corsa, and can
+## be shared by multiple simulated switch abstractions.
+mycorsa.rest.location=https:\//10.11.12.13/
+mycorsa.rest.cert.file=mycorsa-certificate.pem
+mycorsa.rest.authz.file=mycorsa-authz
+mycorsa.ctrl.host=172.31.31.1
+mycorsa.ctrl.port=6556
+mycorsa.ctrl.netns=dpb-netns
+mycorsa.ctrl.rest.location=http:\//localhost:8081/slicer/
+</code></pre></div><p>The switch networks each operate a distinct bridge in the same Corsa.  The bridges all connect to the same controller on the same host.  As the networks access the same Corsa, and the same OpenFlow controller, their control parameters are all inherited from the same configuration, <code>mycorsa</code>.  <code>mycorsa.ctrl</code> identifies the northbound interface of the OF controller; <code>mycorsa.rest</code> identifies the management API of the Corsa.  You will need to enable this on your Corsa, as well as generate credentials to reference from the <code>rest.cert.file</code> and <code>rest.authz.file</code> fields.  (These filenames are relative to the file referencing them.)</p>
+<p>Each switch network type is <code>corsa-dp2x00-sharedbr</code>, meaning a single bridge is created and used for all services.  Each network gives its bridge a distinct description within Corsa management; for example, the <code>paris</code> bridge&rsquo;s description begins with <code>dpb:vc:paris:</code>.  When the network first contacts the Corsa, it ensures that only one bridge has a description with that prefix.</p>
+<p>In the <code>corsa-dp2x00-sharedbr</code> implementation, each active service of <em>N</em> end points manifests as <em>N</em> tunnel attachments to <em>N</em> available ofports of the bridge (which can be viewed on the Corsa with <code>show bridge br2 tunnel</code>, assuming <code>br2</code> is the bridge operated by the logical switch on whose behalf the controller acts).  When <em>N</em>=2, two OpenFlow rules can be seen to exchange traffic from each of these ofports to the other (with <code>show openflow flow br2</code>).  For larger <em>N</em>, an OpenFlow group is created to output to all ofports forming the service (`show openflow group br2), learning-switch rules based on this group are added, and unrecognized source MACs are delivered to the controller.</p>
+<p>There is no topology information in the configuration file, as that is set up through other <a href="http://scc-forge.lancaster.ac.uk/javadoc/dataplanebroker-test/uk/ac/london/networks/apps/Commander-method-main/1java$lang$String">dpb-client commands</a>.  The configuration file only contains management connectivity information.</p>
+<h3 id="ssh-authorization">SSH authorization</h3>
+<p>The server is managed through SSH.  The script <code>dpb-ssh-agent</code> is invoked on the server side, with minimal argumentation, then the client and server engage in a bidirectional exchange of JSON messages.  To allow a user access, take their SSH public key, and append it as a single line to <code>~/.ssh/authorized_keys</code> on the server account.  This should be augmented with settings that restrict what the client can invoke:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">command=&#34;/usr/local/bin/dpb-ssh-agent +N -s /tmp/dataplane-broker.sock -m london -m athens -m paris -m aggr&#34;,no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty ecdsa-sha2-nistp256 AAAAE2VjZH…f85P+s= foo@example
+</code></pre></div><p>(You might not need <code>+N</code> if you&rsquo;ve got a newer <code>nc</code> command.)</p>
+<p>The example above permits the caller to manage and control all four network abstractions (<code>london</code>, <code>athens</code>, <code>paris</code> and <code>aggr</code>).  Management operations include the addition and removal of terminals, and the additional, removal and configuration of trunks (for aggregators only).  Control operations include the creation, definition, activation, deactivation and release of services.  Use <code>-c</code> instead of <code>-m</code> to permit only control of a particular network.</p>
+<p>If you&rsquo;re going to run the server in a Docker image, invoke the agent within the running container:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">command=&#34;docker exec -i dpb-server /usr/local/bin/dpb-ssh-agent -o \&#34;$SSH_ORIGINAL_COMMAND\&#34; -N -s /tmp/dataplane-broker.sock -m root&#34;,no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty ecdsa-sha2-nistp256 AAAAE2VjZH…f85P+s= foo@example
+</code></pre></div><h2 id="dpb-server-invocation">DPB server invocation</h2>
+<p>Run the DPB server process through Usmux:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">usmux -d -B /tmp/dataplane-broker.sock -- dpb-server -s &#39;%s&#39; -L/usr/share/java -L/usr/local/share/java -lsqlite-jdbc -lhttpcore -lhttpclient -lcommons-logging
+</code></pre></div><p>Everything after <code>--</code> is the actual DPB server command.  Usmux creates a Unix-domain socket <code>/tmp/dataplane-broker.sock</code> (which is also an argument of the SSH configuration below), listens for connections on it, and relays them to the given process.</p>
+<p>The <code>-d</code> runs in debug mode, i.e., the server process remains in the foreground, and remains connected to the terminal.  Without it, the command exits as soon as the server is established and has forked into the background.</p>
+<p>To run as a cronjob, remember to escape the <code>%</code> character in the command, as this is special in <code>crontab</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">*/10 * * * * usmux -B /tmp/dataplane-broker.sock -- dpb-server -s &#39;\%s&#39; -L/usr/share/java -L/usr/local/share/java -lsqlite-jdbc -lhttpcore -lhttpclient -lcommons-logging &gt; /dev/null 2&gt;&amp;amp;1
+</code></pre></div><p>If you&rsquo;re using the Docker image, run with:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -d --restart unless-stopped --name dpb-server \
+  -p 4753:4753 \
+  -v ~/.config/dataplane-broker:/root/.config/dataplane-broker:ro \
+  -v ~/.local/var/dataplane-broker:/root/.local/var/dataplane-broker:rw \
+  simpsonst/dpb-server
+</code></pre></div><h2 id="dpb-client-configuration">DPB client configuration</h2>
+<p>If you haven&rsquo;t got one, you&rsquo;ll need an SSH key to get in to remote servers:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ssh-keygen -t ecdsa -f ~/.ssh/dpb_ecdsa
+</code></pre></div><p>That creates <code>dpb_ecdsa</code> and <code>dpb_ecdsa.pub</code> in your SSH directory.  Provide the public key to the server admin to install as noted above.</p>
+<p>(You could use your existing key pair, but if you already use it to get unrestricted access to the account, using that key pair will preclude it, as the <code>authorized_keys</code> configuration will restrict the user to running only <code>dpb-ssh-agent</code>, and only in one particular way.)</p>
+<p>Store client-side configuration in <code>~/.config/dataplanebroker/client.properties</code>.  The syntax is the same as for the server side.  However, all the agents are just SSH clients into the server account (<code>me@dpb-server.home</code> in this example).  For example:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">## Define how to SSH to the server host and account.
+beta.host=dpb-server.home
+beta.user=me
+beta.key-file=${user.home}/.ssh/london-switch_ecdsa
+beta.config-file=/dev/null
+
+## Indicate the configuration prefixes of agents to instantiate.
+agents=london, paris, athens, aggr
+
+## Define those agents with corresponding prefixes (e.g., &#34;paris.&#34;)...
+
+## This agent provides access to a remote switch via SSH.
+paris.type=ssh-switch
+paris.ssh.inherit=\#beta
+
+## Identify this switch by this name.  This applies to both the
+## command line (i.e., &#34;-n paris&#34;), and the name used at the remote
+## site.
+paris.name=paris
+
+## Other networks are configured similarly...
+
+athens.type=ssh-switch
+athens.ssh.inherit=\#beta
+athens.name=athens
+
+london.type=ssh-switch
+london.ssh.inherit=\#beta
+london.name=london
+
+aggr.type=ssh-switch
+aggr.ssh.inherit=\#beta
+aggr.name=aggr
+</code></pre></div><p>Run the client as <code>dpb-client</code>.</p>
+<p>If you&rsquo;ve got the Docker image, you should create an alias:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">function dpb-client () {
+    docker run --rm --init \
+      -v ~/.ssh:/root/.ssh:ro \
+      -v ~/.config/dataplane-broker:/root/.config/dataplane-broker:ro \
+      simpsonst/dpb-client &#34;$@&#34; 
+}
+</code></pre></div><p>You will likely need the <code>config-file</code> of the SSH options if running through Docker, as SSH will complain about ownership of the default configuration file.  (It&rsquo;s running as <code>root</code>, but the file is owned by <code>me</code>.)  Of course, this means you can&rsquo;t use any settings from that file.</p>
+
+</div>
+</div>
+
+    
+  </div>
+
+  <div class="sub-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="sub-footer-inner">
+          <ul>
+            <li class="zerostatic"><a href="https://www.zerostatic.io">www.zerostatic.io</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/scripts.min.1237ff71925bb8625c97a9af8db4c54525258bedfd7c47493daaff723bea755e.js"></script>
+  
+
+  
+  
+  
+    
+  
+
+
+</body>
+
+</html>

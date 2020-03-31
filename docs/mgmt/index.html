@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Management - DataPlane Broker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="icon" href="http://dataplanebroker.github.io/favicon.png">
+
+  
+  
+  <link rel="stylesheet" href="/css/style.min.aad43d4ecb69a264f2539b89d7f779d5f3cdff22e7585fe5fc3c77272f1c2696.css">
+  
+
+  
+
+</head>
+
+<body class='page page-default-single'>
+  <div id="main-menu-mobile" class="main-menu-mobile">
+  <ul>
+    
+    
+    <li class="menu-item-home">
+      <a href="/">
+        <span>Home</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-what is dpb">
+      <a href="/docs/intro/">
+        <span>What is DPB</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-install">
+      <a href="/docs/installation">
+        <span>Install</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-news">
+      <a href="/news/">
+        <span>News</span>
+      </a>
+    </li>
+    
+  </ul>
+</div>
+  <div class="wrapper">
+    <div class='header'>
+  <div class="container">
+    <div class="logo">
+      <a href="http://dataplanebroker.github.io"><img alt="Logo" src="/images/logo.svg" /></a>
+    </div>
+    <div class="logo-mobile">
+      <a href="http://dataplanebroker.github.io"><img alt="Logo" src="/images/logo.svg" /></a>
+    </div>
+    <div id="main-menu" class="main-menu">
+  <ul>
+    
+    
+    <li class="menu-item-home">
+      <a href="/">
+        <span>Home</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-what is dpb">
+      <a href="/docs/intro/">
+        <span>What is DPB</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-install">
+      <a href="/docs/installation">
+        <span>Install</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-news">
+      <a href="/news/">
+        <span>News</span>
+      </a>
+    </li>
+    
+  </ul>
+</div>
+    <button id="toggle-main-menu-mobile" class="hamburger hamburger--slider" type="button">
+  <span class="hamburger-box">
+    <span class="hamburger-inner"></span>
+  </span>
+</button>
+  </div>
+</div>
+
+
+    
+    
+    
+    
+
+    
+    
+<h1 class="title">Management</h1>
+<div class="content ">
+  <p>Details of network topology are set up dynamically through the management client <code>dpb-client</code>.  See the <a href="http://scc-forge.lancaster.ac.uk/javadoc/dataplanebroker-test/uk/ac/lancs/networks/apps/Commander-method-main/1java$lang$String">command-line documentation</a> for further details.</p>
+<h2 id="example-topology-configuration">Example topology configuration</h2>
+<p>In our example, a single Corsa is used to host three bridges (a.k.a. VFCs).  Ports 24 and 25 are assumed to connect to (say) the dataplanes of two OpenStack installations.  Ports 13 and 29 are looped together at 10G to simulate a long-distance link.  All these ports must use tunnel mode <code>ctag</code>.  We wish to operate the bridges as a chain connecting the two OpenStack installations together.</p>
+<p>The three bridges correspond to three logical switches (<code>athens</code>, <code>paris</code>, <code>london</code>) in the network abstraction.  <code>london</code> will connect directly to one of the OpenStacks, and <code>athens</code> will connect to the other.  Two trunks of 5G each will be multiplexed on the port 13-29 loop.  Each switch will have two terminals, named <code>openstack</code> if it connects to an OpenStack installation, or named the same as the switch it connects to otherwise.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Logical network</th>
+<th align="left">Terminal</th>
+<th align="left">Mapping</th>
+<th align="left">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>london</code></td>
+<td align="left"><code>openstack</code></td>
+<td align="left"><code>phys.25</code></td>
+<td align="left">Physical port 25 (OpenStack #1)</td>
+</tr>
+<tr>
+<td align="left"><code>london</code></td>
+<td align="left"><code>paris</code></td>
+<td align="left"><code>phys.13</code></td>
+<td align="left">Physical port 13 (loop to 29)</td>
+</tr>
+<tr>
+<td align="left"><code>paris</code></td>
+<td align="left"><code>london</code></td>
+<td align="left"><code>phys.29</code></td>
+<td align="left">Physical port 29 (loop to 13)</td>
+</tr>
+<tr>
+<td align="left"><code>paris</code></td>
+<td align="left"><code>athens</code></td>
+<td align="left"><code>phys.29</code></td>
+<td align="left">Physical port 29 (loop to 13)</td>
+</tr>
+<tr>
+<td align="left"><code>athens</code></td>
+<td align="left"><code>paris</code></td>
+<td align="left"><code>phys.13</code></td>
+<td align="left">Physical port 13 (loop to 29)</td>
+</tr>
+<tr>
+<td align="left"><code>athens</code></td>
+<td align="left"><code>openstack</code></td>
+<td align="left"><code>phys.24</code></td>
+<td align="left">Physical port 24 (OpenStack #2)</td>
+</tr>
+<tr>
+<td align="left"><code>aggr</code></td>
+<td align="left"><code>london-openstack</code></td>
+<td align="left"><code>london:openstack</code></td>
+<td align="left">Terminal <code>openstack</code> in network <code>london</code></td>
+</tr>
+<tr>
+<td align="left"><code>aggr</code></td>
+<td align="left"><code>athens-openstack</code></td>
+<td align="left"><code>athens:openstack</code></td>
+<td align="left">Terminal <code>openstack</code> in network <code>athens</code></td>
+</tr>
+</tbody>
+</table>
+<p>The following command sets up all terminals and trunks in one go:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dpb-client -n london \
+	   add-terminal openstack phys.25 \
+	   add-terminal paris phys.13 \
+	   -n paris \
+	   add-terminal london phys.29 \
+	   add-terminal athens phys.29 \
+	   -n athens \
+	   add-terminal paris phys.13 \
+	   add-terminal openstack phys.24 \
+	   -n aggr \
+	   add-terminal athens-openstack athens:openstack \
+	   add-terminal london-openstack london:openstack \
+	   add-trunk athens:paris paris:athens \
+	   add-trunk london:paris paris:london \
+	   provide paris:athens 5000 \
+	   provide paris:london 5000 \
+	   open paris:athens 100-399 \
+	   open paris:london 400-699
+</code></pre></div><p>Each <code>-n</code> selects a logical switch to contact for subsequent commands, so first <code>london</code> is configured, then <code>paris</code>, and so on.  Terminals on the switches are created first.  This allows trunks in the aggregator to be created by referencing them.</p>
+<p>The <code>provide</code> commands increase the bandwidth capacity on each trunk by 5000Mbps each.  Each trunk is set to use at most half of the physical capacity of the loop they share.</p>
+<p>The <code>open</code> commands allow ranges of labels (which map to VLAN tags) to be used on each trunk.  By choosing disjoint ranges, they can share the same physical loop.</p>
+<h2 id="terminal-capacity">Terminal capacity</h2>
+<p>You can apply limits to the bandwidth available at a switch terminal.  Normally, you would only do this for external terminals of a network, not for the internal terminals (those that define the ends of trunks).  Ingress and egress limits are distinct, but can be set together.  To limit terminal <code>openstack</code> on switch <code>london</code> to 1000Mbps in either direction:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dpb-client -n london quota openstack 1000
+</code></pre></div><p>New services that take the total bandwidth beyond the limit will fail.</p>
+<p>Setting the quota below the current usage level is not an error.  It simply forbids all new services on the terminal until sufficient bandwidth has been released from existing services.</p>
+<p>You can remove both limits:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dpb-client -n london quota openstack off
+</code></pre></div><p>You can set ingress and egress limits separately (1000Mbps for ingress, 500Mbps for egress):</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dpb-client -n london quota openstack 1000:500
+</code></pre></div><p>If you want to set one, and leave the other unchanged:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dpb-client -n london quota openstack 1000:-
+</code></pre></div><p>Or to switch ingress off:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dpb-client -n london quota openstack off:-
+</code></pre></div><p>And so on.</p>
+
+</div>
+</div>
+
+    
+  </div>
+
+  <div class="sub-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="sub-footer-inner">
+          <ul>
+            <li class="zerostatic"><a href="https://www.zerostatic.io">www.zerostatic.io</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/scripts.min.1237ff71925bb8625c97a9af8db4c54525258bedfd7c47493daaff723bea755e.js"></script>
+  
+
+  
+  
+  
+    
+  
+
+
+</body>
+
+</html>

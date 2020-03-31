@@ -17,18 +17,43 @@
       <pubDate>Sun, 01 Sep 2019 19:27:37 +1000</pubDate>
       
       <guid>http://dataplanebroker.github.io/docs/intro/</guid>
-      <description>NFV-MANO data model and the WIM NFV management standardization is predominantly driven by the ETSI NFV SIG. The group develops a wide portfolio of standards and reference implementations, including the NFV-MANO architecture and data models.</description>
+      <description>The role of the broker in NFV</description>
     </item>
     
     <item>
       <title>Installation</title>
-      <link>http://dataplanebroker.github.io/docs/install/</link>
+      <link>http://dataplanebroker.github.io/docs/installation/</link>
       <pubDate>Mon, 13 Jan 2020 11:49:39 +0000</pubDate>
       
-      <guid>http://dataplanebroker.github.io/docs/install/</guid>
-      <description>Installing the DPB service The instructions assume a platform of Ubuntu 18.04. It can surely be adapted for other Linux platforms.
-Install Java 9 or later:
- sudo apt-get install openjdk-11-jdk  Install other prerequisites:</description>
+      <guid>http://dataplanebroker.github.io/docs/installation/</guid>
+      <description>How to install the three broker components: server, SSH client, and Ryu controllers</description>
+    </item>
+    
+    <item>
+      <title>Configuration &amp; invocation</title>
+      <link>http://dataplanebroker.github.io/docs/config/</link>
+      <pubDate>Wed, 15 Jan 2020 14:38:33 +0000</pubDate>
+      
+      <guid>http://dataplanebroker.github.io/docs/config/</guid>
+      <description>How to configure and invoke DPB components</description>
+    </item>
+    
+    <item>
+      <title>Management</title>
+      <link>http://dataplanebroker.github.io/docs/mgmt/</link>
+      <pubDate>Wed, 15 Jan 2020 14:49:22 +0000</pubDate>
+      
+      <guid>http://dataplanebroker.github.io/docs/mgmt/</guid>
+      <description>Management operations include describing the network topology to the broker.  The SSH client is used to configure network topology.</description>
+    </item>
+    
+    <item>
+      <title>Control</title>
+      <link>http://dataplanebroker.github.io/docs/ctrl/</link>
+      <pubDate>Wed, 15 Jan 2020 14:50:43 +0000</pubDate>
+      
+      <guid>http://dataplanebroker.github.io/docs/ctrl/</guid>
+      <description>Control operations include setting up and tearing down services.  These can be invoked by SSH or REST.</description>
     </item>
     
     <item>

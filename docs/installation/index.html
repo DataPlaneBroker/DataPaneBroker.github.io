@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Installation - DataPlane Broker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="icon" href="http://dataplanebroker.github.io/favicon.png">
+
+  
+  
+  <link rel="stylesheet" href="/css/style.min.aad43d4ecb69a264f2539b89d7f779d5f3cdff22e7585fe5fc3c77272f1c2696.css">
+  
+
+  
+
+</head>
+
+<body class='page page-default-single'>
+  <div id="main-menu-mobile" class="main-menu-mobile">
+  <ul>
+    
+    
+    <li class="menu-item-home">
+      <a href="/">
+        <span>Home</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-what is dpb">
+      <a href="/docs/intro/">
+        <span>What is DPB</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-install">
+      <a href="/docs/installation">
+        <span>Install</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-news">
+      <a href="/news/">
+        <span>News</span>
+      </a>
+    </li>
+    
+  </ul>
+</div>
+  <div class="wrapper">
+    <div class='header'>
+  <div class="container">
+    <div class="logo">
+      <a href="http://dataplanebroker.github.io"><img alt="Logo" src="/images/logo.svg" /></a>
+    </div>
+    <div class="logo-mobile">
+      <a href="http://dataplanebroker.github.io"><img alt="Logo" src="/images/logo.svg" /></a>
+    </div>
+    <div id="main-menu" class="main-menu">
+  <ul>
+    
+    
+    <li class="menu-item-home">
+      <a href="/">
+        <span>Home</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-what is dpb">
+      <a href="/docs/intro/">
+        <span>What is DPB</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-install">
+      <a href="/docs/installation">
+        <span>Install</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-news">
+      <a href="/news/">
+        <span>News</span>
+      </a>
+    </li>
+    
+  </ul>
+</div>
+    <button id="toggle-main-menu-mobile" class="hamburger hamburger--slider" type="button">
+  <span class="hamburger-box">
+    <span class="hamburger-inner"></span>
+  </span>
+</button>
+  </div>
+</div>
+
+
+    
+    
+    
+    
+
+    
+    
+<h1 class="title">Installation</h1>
+<div class="content ">
+  <p>There are three main components that can be installed together, or separately:</p>
+<ul>
+<li>
+<p>Server</p>
+</li>
+<li>
+<p>SSH client for management and control operations</p>
+</li>
+<li>
+<p>Ryu controllers for Corsa and Generic OpenFlow fabrics</p>
+</li>
+</ul>
+<p>They are available as Docker images, and can also be built from source.  The instructions to build from source are annotated with <strong>[Server]</strong>, <strong>[Client]</strong>, <strong>[Controllers]</strong> to indicate which commands to execute depending in which components you&rsquo;re trying to install.</p>
+<h2 id="docker-images">Docker images</h2>
+<p>Images are available for the the Corsa Ryu controller, the server, and the client:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker pull simpsonst/dpb-ctrl-corsa
+docker pull simpsonst/dpb-server
+docker pull simpsonst/dpb-client
+</code></pre></div><h2 id="packaged-prerequisites">Packaged prerequisites</h2>
+<p>A platform of Ubuntu 18.04 is assumed.  The instructions can surely be adapted for other Linux platforms.</p>
+<p><strong>[Server]</strong> Install Java 9 or later, and other prerequisites:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">sudo apt-get install -y netcat-openbsd \
+	openjdk-11-jdk-headless openjdk-11-jre-headless \
+	libjsonp-java libhttpcore-java \
+	libhttpclient-java libcommons-logging-java \
+	build-essential gawk par subversion git curl zip m4
+</code></pre></div><p><strong>[Client]</strong> Install Java 9 or later, and other prerequisites:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">sudo apt-get install -y netcat-openbsd \
+	openjdk-11-jdk-headless openjdk-11-jre-headless \
+	libjsonp-java build-essential gawk par subversion \
+	git curl zip m4
+</code></pre></div><p><strong>[Controllers]</strong> Install Ryu, and other build tools:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">sudo apt-get install -y python-ryu build-essential gawk \
+	par subversion git
+</code></pre></div><p><strong>[Client]</strong> <strong>[Server]</strong> <strong>Ubuntu <em><strong>16.04</strong></em> doesn&rsquo;t have <code>libjsonp-java</code>.</strong>  This procedure should install it under <code>/usr/local/share/java/</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cd /tmp
+curl &#39;http://www.java2s.com/Code/JarDownload/javax.json/javax.json-1.0.jar.zip&#39; -o javax.json-1.0.jar.zip
+unzip javax.json-1.0.jar.zip
+sudo mkdir -p /usr/local/share/java
+sudo mv javax.json-1.0.jar /usr/local/share/java
+sudo ln -s javax.json-1.0.jar /usr/local/share/java/javax.json.jar
+</code></pre></div><h2 id="pre-built-prerequisites">Pre-built prerequisites</h2>
+<p><strong>[Server]</strong> A database connector is also required:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">sudo mkdir -p /usr/local/share/java
+sudo curl &#39;https://bitbucket.org/xerial/sqlite-jdbc/downloads/sqlite-jdbc-3.23.1.jar&#39; \
+	-o /usr/local/share/java/sqlite-jdbc-3.23.1.jar
+sudo ln -s sqlite-jdbc-3.23.1.jar /usr/local/share/java/sqlite-jdbc.jar
+</code></pre></div><h2 id="user-built-prerequisites">User-built prerequisites</h2>
+<p>The DPB and its remaining prerequisites are best checked out from their repositories.  We&rsquo;ll assume you&rsquo;ll keep working copies in a directory such as <code>~/works/</code>.</p>
+<h3 id="installing-binodeps">Installing Binodeps</h3>
+<p><strong>[Controllers]</strong> <strong>[Client]</strong> <strong>[Server]</strong> Install <a href="http://scc-forge.lancaster.ac.uk/open/simpsons/software/pkg-binodeps">Binodeps</a>, which provides enhanced rules for building C and C++ programs using GNU Make, as well as installation rules for scripts and static data:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">mkdir -p ~/works
+cd ~/works
+svn co http://scc-forge.lancaster.ac.uk/svn-repos/misc/binodeps/trunk/ binodeps
+cd binodeps
+make &amp;&amp; sudo make install
+</code></pre></div><h3 id="installing-jardeps">Installing Jardeps</h3>
+<p><strong>[Client]</strong> <strong>[Server]</strong> Install <a href="http://scc-forge.lancaster.ac.uk/open/simpsons/software/pkg-jardeps">Jardeps</a>, which provides rules for compiling Java with GNU Make:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cd ~/works
+svn co &#39;http://scc-forge.lancaster.ac.uk/svn-repos/misc/jardeps/trunk&#39; jardeps
+cd jardeps
+make &amp;&amp; sudo make install
+</code></pre></div><h3 id="installing-java-rest-library">Installing Java REST library</h3>
+<p><strong>[Server]</strong> Install Java REST library (noting correct path for <code>javax.json.jar</code> if you installed it manually):</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cd ~/works
+svn co &#39;http://scc-forge.lancaster.ac.uk/svn-repos/utils/lurest/trunk&#39; \
+	lurest
+cat &gt; lurest-env.mk &lt;&lt;EOF
+CLASSPATH += /usr/share/java/httpclient.jar
+CLASSPATH += /usr/share/java/httpcore.jar
+CLASSPATH += /usr/local/share/java/jardeps-lib.jar
+CLASSPATH += /usr/share/java/javax.json.jar
+EOF
+make &amp;&amp; sudo make install
+</code></pre></div><p><a href="http://scc-forge.lancaster.ac.uk/javadoc/lurest-test/overview-summary">Javadoc</a> exists for this project.</p>
+<h3 id="installing-ddslib">Installing DDSLib</h3>
+<p><strong>[Server]</strong> Install <a href="http://scc-forge.lancaster.ac.uk/open/simpsons/software/pkg-smilib">DDSLib</a>, a C library for managing various data structures like linked lists, binary heaps, etc.:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cd ~/works
+svn co &#39;http://scc-forge.lancaster.ac.uk/svn-repos/utils/ddslib/branches/stable&#39; ddslib
+cd ddslib
+cat &gt; ddslib-env.mk &lt;&lt;EOF
+CFLAGS += -O2 -g
+CFLAGS += -std=gnu11
+
+CPPFLAGS += -D_XOPEN_SOURCE=600
+CPPFLAGS += -D_GNU_SOURCE=1
+CPPFLAGS += -pedantic -Wall -W -Wno-unused-parameter
+CPPFLAGS += -Wno-missing-field-initializers
+
+CXXFLAGS += -O2 -g
+CXXFLAGS += -std=gnu++11
+EOF
+make &amp;&amp; sudo make install
+</code></pre></div><h3 id="installing-reactor">Installing Reactor</h3>
+<p><strong>[Server]</strong> Install <a href="http://scc-forge.lancaster.ac.uk/open/simpsons/software/pkg-react">Reactor</a>, a library for event-driven programming in C:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cd ~/works
+svn co &#39;http://scc-forge.lancaster.ac.uk/svn-repos/utils/react/trunk&#39; react
+cd react
+cat &gt; react-env.mk &lt;&lt;EOF
+ENABLE_CXX=no
+CFLAGS += -O2 -g
+CFLAGS += -std=gnu11
+
+CPPFLAGS += -D_XOPEN_SOURCE=600
+CPPFLAGS += -D_GNU_SOURCE=1
+CPPFLAGS += -pedantic -Wall -W -Wno-unused-parameter
+CPPFLAGS += -Wno-missing-field-initializers
+
+CXXFLAGS += -O2 -g
+CXXFLAGS += -std=gnu++11
+EOF
+make &amp;&amp; sudo make install
+</code></pre></div><h3 id="installing-usmux">Installing Usmux</h3>
+<p><strong>[Server]</strong> Install <a href="http://scc-forge.lancaster.ac.uk/open/simpsons/software/pkg-usmux">Usmux</a>, which allows a Java process to receive connections over a Unix-domain socket, and fork into the background.  The DPB server process makes itself available over such a socket.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cd ~/works
+svn co &#39;http://scc-forge.lancaster.ac.uk/svn-repos/misc/usmux/branches/export&#39; usmux
+cd usmux
+cat &gt; usmux-env.mk &lt;&lt;EOF
+CFLAGS += -O2 -g
+CFLAGS += -std=gnu11
+CPPFLAGS += -D_XOPEN_SOURCE=600
+CPPFLAGS += -D_GNU_SOURCE=1
+CPPFLAGS += -pedantic -Wall -W -Wno-unused-parameter
+CPPFLAGS += -Wno-missing-field-initializers
+EOF
+make &amp;&amp; sudo make install
+</code></pre></div><h2 id="installing-dpb">Installing DPB</h2>
+<p><strong>[Server]</strong> These commands also install the controllers and the client as a side-effect.  Note the correct path for <code>javax.json.jar</code> if you installed it manually.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cd ~/works
+git clone git@github.com:DataPlaneBroker/DPB.git
+cd DPB
+cat &gt; dataplanebroker-env.mk &lt;&lt;EOF
+CLASSPATH += /usr/share/java/junit4.jar
+CLASSPATH += /usr/share/java/javax.json.jar
+CLASSPATH += /usr/share/java/httpcore.jar
+CLASSPATH += /usr/share/java/httpclient.jar
+CLASSPATH += /usr/share/java/commons-logging.jar
+CLASSPATH += /usr/local/share/java/jardeps-lib.jar
+CLASSPATH += /usr/local/share/java/lurest-client-api.jar
+
+CLASSPATH += /usr/local/share/java/usmux_session.jar
+CLASSPATH += /usr/local/share/java/lurest-server-api.jar
+CLASSPATH += /usr/local/share/java/lurest-service.jar
+PROCPATH += /usr/local/share/java/lurest-service.jar
+PROCPATH += /usr/local/share/java/lurest-service-proc.jar
+EOF
+make &amp;&amp; sudo make install
+</code></pre></div><p><strong>[Client]</strong> These commands also install the controllers as a side-effect.  Note the correct path for <code>javax.json.jar</code> if you installed it manually.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cd ~/works
+git clone git@github.com:DataPlaneBroker/DPB.git
+cd DPB
+cat &gt; dataplanebroker-env.mk &lt;&lt;EOF
+CLASSPATH += /usr/share/java/junit4.jar
+CLASSPATH += /usr/share/java/javax.json.jar
+CLASSPATH += /usr/share/java/httpcore.jar
+CLASSPATH += /usr/share/java/httpclient.jar
+CLASSPATH += /usr/share/java/commons-logging.jar
+CLASSPATH += /usr/local/share/java/jardeps-lib.jar
+CLASSPATH += /usr/local/share/java/lurest-client-api.jar
+EOF
+make client &amp;&amp; sudo make install-client
+</code></pre></div><p><strong>[Controllers]</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cd ~/works
+git clone git@github.com:DataPlaneBroker/DPB.git
+cd DPB
+sudo make install-ctrl
+</code></pre></div><hr>
+<h2 id="install-nbi-information">Install NBI information</h2>
+<h2 id="install-wim-driver-in-ro">Install WIM Driver in RO</h2>
+<h2 id="dpb-ro-repo">DPB RO repo</h2>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">git clone https://github.com/DataPlaneBroker/RO.git
+</code></pre></div><p>Erm, probably not to be done any more, as it&rsquo;s integrated into OSM now, right?</p>
+
+</div>
+</div>
+
+    
+  </div>
+
+  <div class="sub-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="sub-footer-inner">
+          <ul>
+            <li class="zerostatic"><a href="https://www.zerostatic.io">www.zerostatic.io</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/scripts.min.1237ff71925bb8625c97a9af8db4c54525258bedfd7c47493daaff723bea755e.js"></script>
+  
+
+  
+  
+  
+    
+  
+
+
+</body>
+
+</html>
